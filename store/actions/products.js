@@ -5,6 +5,7 @@ export const CREATE_PRODUCT = "CREATE_PRODUCT";
 export const UPDATE_PRODUCT = "UPDATE_PRODUCT";
 export const SET_PRODUCTS = "SET_PRODUCTS";
 
+////////// Get the data from Firebase //////////
 export const fetchProducts = () => {
 	return async (dispatch) => {
 		// .json in tje end of URL is Firebase specific
@@ -14,7 +15,7 @@ export const fetchProducts = () => {
 			);
 
 			if (!response.ok) {
-				throw new Error("Something went wrong!")
+				throw new Error("Something went wrong!");
 			}
 
 			const resData = await response.json();
@@ -41,10 +42,20 @@ export const fetchProducts = () => {
 	};
 };
 
+////////// Delete a Product //////////
 export const deleteProduct = (productId) => {
-	return { type: DELETE_PRODUCT, pid: productId };
+	return async (dispatch) => {
+		await fetch(
+			`https://rn-shopping-app-219d3.firebaseio.com/products/${productId}.json`,
+			{
+				method: "DELETE",
+			}
+		);
+		dispatch({ type: DELETE_PRODUCT, pid: productId });
+	};
 };
 
+////////// Create a Product //////////
 export const createProduct = (title, description, imageUrl, price) => {
 	// we add this next return around the other for reduxThunk. then we change the other return to dispatch()
 	return async (dispatch) => {
@@ -85,14 +96,32 @@ export const createProduct = (title, description, imageUrl, price) => {
 	};
 };
 
+////////// Update a Product //////////
 export const updateProduct = (id, title, description, imageUrl) => {
-	return {
-		type: UPDATE_PRODUCT,
-		pid: id,
-		productData: {
-			title,
-			description,
-			imageUrl,
-		},
+	return async (dispatch) => {
+		await fetch(
+			`https://rn-shopping-app-219d3.firebaseio.com/products/${id}.json`,
+			{
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					title,
+					description,
+					imageUrl,
+				}),
+			}
+		);
+
+		dispatch({
+			type: UPDATE_PRODUCT,
+			pid: id,
+			productData: {
+				title,
+				description,
+				imageUrl,
+			},
+		});
 	};
 };
