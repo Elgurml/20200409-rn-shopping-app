@@ -8,27 +8,36 @@ export const SET_PRODUCTS = "SET_PRODUCTS";
 export const fetchProducts = () => {
 	return async (dispatch) => {
 		// .json in tje end of URL is Firebase specific
-		const response = await fetch(
-			"https://rn-shopping-app-219d3.firebaseio.com/products.json"
-		);
-
-		const resData = await response.json();
-		const loadedProduct = [];
-
-		for (const key in resData) {
-			loadedProduct.push(
-				new Product(
-					key,
-					"u1",
-					resData[key].title,
-					resData[key].imageUrl,
-					resData[key].description,
-					resData[key].price
-				)
+		try {
+			const response = await fetch(
+				"https://rn-shopping-app-219d3.firebaseio.com/products.json"
 			);
-		}
 
-		dispatch({ type: SET_PRODUCTS, products: loadedProduct });
+			if (!response.ok) {
+				throw new Error("Something went wrong!")
+			}
+
+			const resData = await response.json();
+			const loadedProduct = [];
+
+			for (const key in resData) {
+				loadedProduct.push(
+					new Product(
+						key,
+						"u1",
+						resData[key].title,
+						resData[key].imageUrl,
+						resData[key].description,
+						resData[key].price
+					)
+				);
+			}
+
+			dispatch({ type: SET_PRODUCTS, products: loadedProduct });
+		} catch (err) {
+			// send to custom analytics server
+			throw err;
+		}
 	};
 };
 
