@@ -44,9 +44,11 @@ export const fetchProducts = () => {
 
 ////////// Delete a Product //////////
 export const deleteProduct = (productId) => {
-	return async (dispatch) => {
-		const response = await fetch(
-			`https://rn-shopping-app-219d3.firebaseio.com/products/${productId}.json`,
+	// we can add the getState function as an argument. Thanks to redux thunk it gives us access to the current state
+	return async (dispatch, getState) => {
+		const token = getState().auth.token
+	const response = await fetch(
+			`https://rn-shopping-app-219d3.firebaseio.com/products/${productId}.json?auth=${token}`,
 			{
 				method: "DELETE",
 			}
@@ -63,9 +65,10 @@ export const deleteProduct = (productId) => {
 ////////// Create a Product //////////
 export const createProduct = (title, description, imageUrl, price) => {
 	// we add this next return around the other for reduxThunk. then we change the other return to dispatch()
-	return async (dispatch) => {
+	return async (dispatch, getState) => {
+		const token = getState().auth.token
 		const response = await fetch(
-			"https://rn-shopping-app-219d3.firebaseio.com/products.json",
+			`https://rn-shopping-app-219d3.firebaseio.com/products.json?auth=${token}`,
 			{
 				method: "POST",
 				headers: {
@@ -103,9 +106,12 @@ export const createProduct = (title, description, imageUrl, price) => {
 
 ////////// Update a Product //////////
 export const updateProduct = (id, title, description, imageUrl) => {
-	return async (dispatch) => {
+	// we can add the getState function as an argument. Thanks to redux thunk it gives us access to the current state
+	return async (dispatch, getState) => {
+		console.log("getState===>>$$$", getState())
+		const token = getState().auth.token
 		const response = await fetch(
-			`https://rn-shopping-app-219d3.firebaseio.com/products/${id}.json`,
+			`https://rn-shopping-app-219d3.firebaseio.com/products/${id}.json?auth=${token}`,
 			{
 				method: "PATCH",
 				headers: {
