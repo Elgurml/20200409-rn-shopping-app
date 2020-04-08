@@ -1,5 +1,13 @@
 import React from "react";
-import { StyleSheet, FlatList, Platform, Button, Alert } from "react-native";
+import {
+	StyleSheet,
+	FlatList,
+	Platform,
+	Button,
+	Alert,
+	View,
+	Text,
+} from "react-native";
 import { useSelector, useDispatch } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 
@@ -8,11 +16,11 @@ import ProductItem from "../../components/shop/ProductItem";
 import * as productsActions from "../../store/actions/products";
 import Colors from "../../constants/Colors";
 
-const UserProductsScreen = props => {
-	const userProducts = useSelector(state => state.products.userProducts);
+const UserProductsScreen = (props) => {
+	const userProducts = useSelector((state) => state.products.userProducts);
 	const dispatch = useDispatch();
 
-	const editProductHandler = id => {
+	const editProductHandler = (id) => {
 		props.navigation.navigate("EditProduct", { productId: id });
 	};
 
@@ -26,19 +34,31 @@ const UserProductsScreen = props => {
 					text: "Yes",
 					style: "destructive",
 					onPress: () => {
-						dispatch(
-							productsActions.deleteProduct(id)
-						);
-					}
-				}
+						dispatch(productsActions.deleteProduct(id));
+					},
+				},
 			]
 		);
 	};
 
+	if (userProducts.length === 0) {
+		return (
+			<View
+				style={{
+					flex: 1,
+					justifyContent: "center",
+					alignItems: "center",
+				}}
+			>
+				<Text>No products found, maybe start creating some?</Text>
+			</View>
+		);
+	}
+
 	return (
 		<FlatList
 			data={userProducts}
-			renderItem={itemData => (
+			renderItem={(itemData) => (
 				<ProductItem
 					image={itemData.item.imageUrl}
 					title={itemData.item.title}
@@ -65,7 +85,7 @@ const UserProductsScreen = props => {
 	);
 };
 
-UserProductsScreen.navigationOptions = navData => {
+UserProductsScreen.navigationOptions = (navData) => {
 	return {
 		headerTitle: "Your Products",
 		headerLeft: () => (
@@ -93,7 +113,7 @@ UserProductsScreen.navigationOptions = navData => {
 					}}
 				/>
 			</HeaderButtons>
-		)
+		),
 	};
 };
 
